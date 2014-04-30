@@ -8,9 +8,6 @@ NICK = ENV['TWITCH_USER']
 NUM_STREAMS = ARGV[0] || 30
 STREAM_PER_PROC = ARGV[1] || 4
 
-puts NUM_STREAMS
-puts STREAM_PER_PROC
-
 def start_bot(channels)
   bot = Cinch::Bot.new do
     db = Redis.new(port: 8888)
