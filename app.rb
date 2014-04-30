@@ -5,8 +5,8 @@ require 'curb'
 
 NICK = ENV['TWITCH_USER']
 
-NUM_STREAMS = ARGV[0] || 30
-STREAM_PER_PROC = ARGV[1] || 4
+NUM_STREAMS = (ARGV[0] || 30).to_i
+STREAM_PER_PROC = (ARGV[1] || 4).to_i
 
 def start_bot(channels)
   bot = Cinch::Bot.new do
