@@ -70,7 +70,7 @@ loop do
   puts "KILLING"
 
   procs.each do |pid| 
-    Process.kill("HUP", pid)
+    Process.kill("KILL", pid)
   end
 
   procs = []
