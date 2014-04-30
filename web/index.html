@@ -47,23 +47,31 @@
 </div>
 
 <script type="text/javascript">
-$.get("data.json", function(data) {
-  for(i=0; i < data["words"].length; i++) {
-    word = data["words"][i];
+function update() {
+  $.get("data.json", function(data) {
+    data = JSON.parse(data);
 
-    $("#top_words").append("<li>"+word[0]+"</li>");
-  }
+    for(i=0; i < data["words"].length; i++) {
+      word = data["words"][i];
 
-  for(i=0; i < data["messages"].length; i++) {
-    msg = data["messages"][i];
+      $("#top_words").append("<li>"+word[0]+"</li>");
+    }
 
-    $("#top_messages").append("<li>"+msg[0]+"</li>");
-  }
+    for(i=0; i < data["messages"].length; i++) {
+      msg = data["messages"][i];
 
-  $("#total_words").html(data["total_words"]);
-  $("#total_messages").html(data["total_messages"]);
-  $("#total_processed").html(data["total_processed"]);
-});
+      $("#top_messages").append("<li>"+msg[0]+"</li>");
+    }
+
+    $("#total_words").html(data["total_words"]);
+    $("#total_messages").html(data["total_messages"]);
+    $("#total_processed").html(data["total_processed"]);
+  });
+
+}
+
+setInterval(update, 1000 * 60);
+update();
 </script>
 </body>
 </html>
