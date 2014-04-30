@@ -47,6 +47,13 @@
 </div>
 
 <script type="text/javascript">
+var emotes = {
+  "kappa": "<img src='http://static-cdn.jtvnw.net/jtv_user_pictures/chansub-global-emoticon-ddc6e3a8732cb50f-25x28.png'>",
+  "biblethump": "<img src='http://static-cdn.jtvnw.net/jtv_user_pictures/chansub-global-emoticon-f6c13c7fc0a5c93d-36x30.png'>",
+  "keepo": "<img src='http://static-cdn.jtvnw.net/jtv_user_pictures/chansub-global-emoticon-8eed21805f6217ce-27x29.png'>",
+  "pjsalt": "<img src='http://static-cdn.jtvnw.net/jtv_user_pictures/chansub-global-emoticon-18be1a297459453f-36x30.png'>"
+}
+
 function update() {
   $("#top_words").html("");
   $("#top_messages").html("");
@@ -65,7 +72,11 @@ function update() {
     for(i=0; i < data["messages"].length; i++) {
       msg = data["messages"][i];
 
-      $("#top_messages").append("<li>"+msg[0]+"</li>");
+      if(emotes[msg[0]]) {
+        $("#top_messages").append("<li>"+emotes[msg[0]]+"</li>");
+      } else {
+        $("#top_messages").append("<li>"+msg[0]+"</li>");
+      }
     }
 
     $("#total_words").html(data["total_words"]);
