@@ -53,12 +53,12 @@ procs = []
 loop do
   puts "Grabbing fresh stream list"
 
-  r = Curl.get("https://api.twitch.tv/kraken/streams")
+  r = Curl.get("https://api.twitch.tv/kraken/streams?limit=#{NUM_STREAMS}")
   data = JSON.parse(r.body_str)
 
   streams = []
 
-  data["streams"][0..(NUM_STREAMS-1)].each do |s|
+  data["streams"].each do |s|
     streams << "##{s["channel"]["name"]}"
   end
 
