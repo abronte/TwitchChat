@@ -48,7 +48,14 @@
 
 <script type="text/javascript">
 function update() {
+  $("#top_words").html("");
+  $("#top_messages").html("");
+
   $.get("data.json", function(data) {
+    if (data["total_processed"] == undefined) {
+      data = JSON.parse(data) 
+    }
+
     for(i=0; i < data["words"].length; i++) {
       word = data["words"][i];
 
