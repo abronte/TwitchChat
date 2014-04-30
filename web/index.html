@@ -49,8 +49,6 @@
 <script type="text/javascript">
 function update() {
   $.get("data.json", function(data) {
-    data = JSON.parse(data);
-
     for(i=0; i < data["words"].length; i++) {
       word = data["words"][i];
 
