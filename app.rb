@@ -23,7 +23,7 @@ def start_bot(channels)
       if m.params[0] != NICK
         db.incr "total"
 
-        msg = m.message.downcase.gsub(/[^\w\s]/, "")
+        msg = m.message.downcase
 
         puts "#{m.channel}\t:: #{m.message}"
 
