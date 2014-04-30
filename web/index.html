@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<br/>
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <table>
+        <tr>
+          <td>Total words:</td>
+          <td><span id="total_words"></span></td>
+        </tr>
+        <tr>
+          <td>Total messages:</td>
+          <td><span id="total_messages"></span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <br/>
+
+  <div class="row">
+    <div class="col-lg-12">
+      Top words:
+      <br/>
+      <ol id="top_words">
+      </ol>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      Top messages:
+      <br/>
+      <ol id="top_messages">
+      </ol>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+$.get("data.json", function(data) {
+  data = JSON.parse(data);
+
+  for(i=0; i < data["words"].length; i++) {
+    word = data["words"][i];
+
+    $("#top_words").append("<li>"+word[0]+"</li>");
+  }
+
+  for(i=0; i < data["messages"].length; i++) {
+    msg = data["messages"][i];
+
+    $("#top_messages").append("<li>"+msg[0]+"</li>");
+  }
+
+  $("#total_words").html(data["total_words"]);
+  $("#total_messages").html(data["total_messages"]);
+});
+</script>
+</body>
+</html>

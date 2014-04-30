@@ -1,4 +1,5 @@
 require 'redis'
+require 'json'
 
 r = Redis.new(port: 8888)
 
@@ -7,6 +8,19 @@ msg_count = r.zcount "chat", 1, 99999999
 
 words = r.zrevrange "words", 0, 15, :with_scores => true
 msgs = r.zrevrange "chat", 0, 15, :with_scores => true
+
+if ARGV[0]
+  data = {
+    words: words,
+    messages: msgs,
+    total_messages: msg_count,
+    total_words: word_count
+  }
+
+  File.write(ARGV[0], data.to_json)
+
+  exit
+end
 
 puts "Top words:\n"
 
