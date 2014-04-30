@@ -64,8 +64,8 @@ loop do
     procs << fork { start_bot(slice) }
   end
 
-  # grab a new top list every 15 minutes
-  sleep(15*60)
+  # grab a new top list every 30 minutes
+  sleep(30*60)
 
   puts "KILLING"
 
