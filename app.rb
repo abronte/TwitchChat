@@ -5,6 +5,12 @@ require 'curb'
 
 NICK = ENV['TWITCH_USER']
 
+NUM_STREAMS = ARGV[0] || 30
+STREAM_PER_PROC = ARGV[1] || 4
+
+puts NUM_STREAMS
+puts STREAM_PER_PROC
+
 def start_bot(channels)
   bot = Cinch::Bot.new do
     db = Redis.new(port: 8888)
@@ -53,11 +59,11 @@ loop do
 
   streams = []
 
-  data["streams"][0..15].each do |s|
+  data["streams"][0..(NUM_STREAMS-1)].each do |s|
     streams << "##{s["channel"]["name"]}"
   end
 
-  streams.each_slice(2) do |slice|
+  streams.each_slice(STREAM_PER_PROC) do |slice|
     procs << fork { start_bot(slice) }
   end
 
