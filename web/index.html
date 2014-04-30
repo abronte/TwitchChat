@@ -13,11 +13,15 @@
       <table>
         <tr>
           <td>Total unique words:</td>
-          <td> <span id="total_words"></span></td>
+          <td>&nbsp;<span id="total_words"></span></td>
         </tr>
         <tr>
           <td>Total unique messages:</td>
-          <td> <span id="total_messages"></span></td>
+          <td>&nbsp;<span id="total_messages"></span></td>
+        </tr>
+        <tr>
+          <td>Total messages processed:</td>
+          <td>&nbsp;<span id="total_processed"></span></td>
         </tr>
       </table>
     </div>
@@ -44,6 +48,7 @@
 
 <script type="text/javascript">
 $.get("data.json", function(data) {
+    data = JSON.parse(data);
   for(i=0; i < data["words"].length; i++) {
     word = data["words"][i];
 
@@ -58,6 +63,7 @@ $.get("data.json", function(data) {
 
   $("#total_words").html(data["total_words"]);
   $("#total_messages").html(data["total_messages"]);
+  $("#total_processed").html(data["total_processed"]);
 });
 </script>
 </body>

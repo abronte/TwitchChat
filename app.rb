@@ -21,6 +21,8 @@ def start_bot(channels)
 
     on :message do |m|
       if m.params[0] != NICK
+        db.incr "total"
+
         msg = m.message.downcase
 
         puts "#{m.channel}\t:: #{m.message}"
