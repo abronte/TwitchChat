@@ -94,9 +94,9 @@ function update() {
       }
     }
 
-    $("#total_words").html(data["total_words"]);
-    $("#total_messages").html(data["total_messages"]);
-    $("#total_processed").html(data["total_processed"]);
+    $("#total_words").html(data["total_words"].toLocaleString());
+    $("#total_messages").html(data["total_messages"].toLocaleString());
+    $("#total_processed").html(data["total_processed"].toLocaleString());
   });
 
 }
