@@ -17,7 +17,7 @@ if ARGV[0]
     messages: msgs,
     total_messages: msg_count,
     total_words: word_count,
-    total_processed: total
+    total_processed: total.to_i
   }
 
   File.write(ARGV[0], data.to_json)
