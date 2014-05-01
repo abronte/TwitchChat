@@ -20,3 +20,7 @@ Setup
 [Twitch.tv irc docs]:http://help.twitch.tv/customer/portal/articles/1302780-twitch-irc
 
 To see the top messages and words, run `check.rb`. 
+
+Issues
+----
+There is an issue of the child processes becoming zombies after they are killed. This doesn't seem to have any impact on performance and are cleaned up when the parent process is killed.
