@@ -25,7 +25,7 @@ def start_bot(channels)
 
         msg = m.message.downcase.strip
 
-        puts "#{m.channel}\t:: #{m.message}"
+        # puts "#{m.channel}\t:: #{m.message}"
 
         if (msg =~ /^[-+]?[0-9]+$/) == nil && msg[0] != "!" && !msg.include?("░")
           db.zincrby "chat", 1, msg 
@@ -47,6 +47,28 @@ def start_bot(channels)
   bot.loggers.level = :error
   bot.start
 end
+
+fork {
+  db = Redis.new(port: 8888)
+
+  count1 = 0
+  count2 = 0
+
+  loop do
+    count1 = db.get("total").to_i
+
+    sleep 1
+
+    count2 = db.get("total").to_i
+
+    tps = count2 - count1
+
+    puts "\e[H\e[2J"
+
+    puts "Listening to #{NUM_STREAMS} streams"
+    puts "#{tps} msg/sec"
+  end
+}
 
 procs = []
 
