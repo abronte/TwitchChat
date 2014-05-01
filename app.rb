@@ -53,6 +53,7 @@ fork {
 
   count1 = 0
   count2 = 0
+  peak = 0
 
   loop do
     count1 = db.get("total").to_i
@@ -63,13 +64,15 @@ fork {
 
     tps = count2 - count1
 
+    peak = tps if tps > peak
+
     db.set "mps", tps
 
     puts "\e[H\e[2J"
 
     puts "Listening to #{NUM_STREAMS} streams"
-    puts "#{tps} msg/sec"
-
+    puts "Peak msg/sec: #{peak}"
+    puts "\n#{tps} msg/sec"
   end
 }
 
