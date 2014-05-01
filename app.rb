@@ -63,10 +63,13 @@ fork {
 
     tps = count2 - count1
 
+    db.set "mps", tps
+
     puts "\e[H\e[2J"
 
     puts "Listening to #{NUM_STREAMS} streams"
     puts "#{tps} msg/sec"
+
   end
 }
 

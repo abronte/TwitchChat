@@ -27,6 +27,10 @@
           <td>Total messages processed:</td>
           <td>&nbsp;<span id="total_processed"></span></td>
         </tr>
+        <!-- <tr> -->
+        <!--   <td>Mesages per second</td> -->
+        <!--   <td>&nbsp;<span id="mps"></span></td> -->
+        <!-- </tr> -->
       </table>
     </div>
   </div>
@@ -97,6 +101,7 @@ function update() {
     $("#total_words").html(data["total_words"].toLocaleString());
     $("#total_messages").html(data["total_messages"].toLocaleString());
     $("#total_processed").html(data["total_processed"].toLocaleString());
+    // $("#mps").html(data["messages_per_second"]);
   });
 
 }
