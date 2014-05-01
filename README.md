@@ -14,7 +14,9 @@ Requirements
 
 Setup
 ----
-* Make sure to have `TWITCH_USER` with your Twitch.tv username and `TWITCH_PW` with your Twitch.tv oauth token set up as environment variables.
+* Make sure to have `TWITCH_USER` with your Twitch.tv username and `TWITCH_PW` with your Twitch.tv oauth token set up as environment variables. See the [Twitch.tv irc docs] for more information.
 * Run `app.b`
+
+[Twitch.tv irc docs]:http://help.twitch.tv/customer/portal/articles/1302780-twitch-irc
 
 To see the top messages and words, run `check.rb`. 
