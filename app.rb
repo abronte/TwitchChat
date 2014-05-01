@@ -62,7 +62,7 @@ loop do
     streams << "##{s["channel"]["name"]}"
   end
 
-  streams.each_slice(STREAM_PER_PROC) do |slice|
+  streams.shuffle.each_slice(STREAM_PER_PROC) do |slice|
     procs << fork { start_bot(slice) }
   end
 
