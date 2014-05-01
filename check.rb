@@ -6,8 +6,8 @@ r = Redis.new(port: 8888)
 word_count = r.zcount "words", 1, 99999999
 msg_count = r.zcount "chat", 1, 99999999
 
-words = r.zrevrange "words", 0, 29, :with_scores => true
-msgs = r.zrevrange "chat", 0, 29, :with_scores => true
+words = r.zrevrange "words", 0, 49, :with_scores => true
+msgs = r.zrevrange "chat", 0, 49, :with_scores => true
 
 total = r.get "total"
 
