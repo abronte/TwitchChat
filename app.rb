@@ -4,104 +4,103 @@ require 'json'
 require 'curb'
 
 NICK = ENV['TWITCH_USER']
-
 NUM_STREAMS = (ARGV[0] || 30).to_i
-STREAM_PER_PROC = (ARGV[1] || 4).to_i
+$db = Redis.new(port: 8888)
 
-def start_bot(channels)
-  bot = Cinch::Bot.new do
-    db = Redis.new(port: 8888)
+def get_streams
+  r = Curl.get("https://api.twitch.tv/kraken/streams?limit=#{NUM_STREAMS}")
+  data = JSON.parse(r.body_str)
 
-    configure do |c|
-      c.server = "irc.twitch.tv"
-      c.password = ENV['TWITCH_PW']
-      c.channels = channels
-      c.nick = NICK
-    end
+  data["streams"].map { |s| "##{s["channel"]["name"]}" }
+end
 
-    on :message do |m|
-      if m.params[0] != NICK
-        db.incr "total"
+$bot = Cinch::Bot.new do
+  configure do |c|
+    c.server = "irc.twitch.tv"
+    c.password = ENV['TWITCH_PW']
+    c.channels = get_streams
+    c.nick = NICK
+  end
 
-        msg = m.message.downcase.strip
+  on :message do |m|
+    # we don't care about messages to us
+    if m.params[0] != NICK
+      $db.incr "total"
 
-        # puts "#{m.channel}\t:: #{m.message}"
+      # attempt to normalize some of these messages. downcase and remove and
+      # trailing or leading white space
+      msg = m.message.downcase.strip
 
-        if (msg =~ /^[-+]?[0-9]+$/) == nil && msg[0] != "!" && !msg.include?("░")
-          db.zincrby "chat", 1, msg 
+      # puts "#{m.channel}\t:: #{m.message}" if m.channel == "#nightblue3"
+      # puts "#{m.channel}\t:: #{m.message}"
 
+      # make sure we're filtering out any voting/comamnd/misc messages
+      if (msg =~ /^[-+]?[0-9]+$/) == nil && msg[0] != "!" && !msg.include?("░")
+        begin
+          $db.zincrby "chat", 1, msg 
+
+          # this emote is notable enough to count it as word even though
+          # there is a space in it
           if msg.include?("༼ つ ◕_◕ ༽つ")
-            db.zincrby "words", 1, "༼ つ ◕_◕ ༽つ"
+            $db.zincrby "words", 1, "༼ つ ◕_◕ ༽つ"
           end
 
+          # remove the emote because we've counted it
+          # also remove double spaces
           msg = msg.gsub("༼ つ ◕_◕ ༽つ", "").gsub("  ", " ")
 
           msg.split(" ").each do |word|
-            db.zincrby "words", 1, word if (word =~ /^[-+]?[0-9]+$/) == nil
+            $db.zincrby "words", 1, word if (word =~ /^[-+]?[0-9]+$/) == nil
           end
+        rescue 
+          puts "\nPROBLEM MSG: #{msg}\n"
         end
       end
     end
   end
-
-  bot.loggers.level = :error
-  bot.start
 end
 
-fork {
-  db = Redis.new(port: 8888)
+$bot.loggers.level = :error
 
-  count1 = 0
-  count2 = 0
-  peak = 0
-
-  loop do
-    count1 = db.get("total").to_i
-
-    sleep 1
-
-    count2 = db.get("total").to_i
-
-    tps = count2 - count1
-
-    peak = tps if tps > peak
-
-    db.set "mps", tps
-
-    puts "\e[H\e[2J"
-
-    puts "Listening to #{NUM_STREAMS} streams"
-    puts "Peak msg/sec: #{peak}"
-    puts "\n#{tps} msg/sec"
-  end
+# gotta start bot in a seperate thread
+Thread.new {
+  $bot.start
 }
 
-procs = []
+puts "Bot started"
 
+sleep(60)
+
+# main loop that monitors what channels we should be
+# listening to
 loop do
-  puts "Grabbing fresh stream list"
+  count1 = $db.get("total").to_i
 
-  r = Curl.get("https://api.twitch.tv/kraken/streams?limit=#{NUM_STREAMS}")
-  data = JSON.parse(r.body_str)
+  channels = $bot.channels.map {|c| c.to_s}
+  puts "Current channels: #{channels.join(", ")}"
 
-  streams = []
+  sleep(5 * 60)
 
-  data["streams"].each do |s|
-    streams << "##{s["channel"]["name"]}"
+  # get an updated top 30 list and join/leave
+  # channels based on this list
+  streams = get_streams
+
+  join = streams - channels
+  leave = channels - streams
+
+  join.each do |c|
+    puts "JOINING #{c}"
+    $bot.join(c)
   end
 
-  streams.shuffle.each_slice(STREAM_PER_PROC) do |slice|
-    procs << fork { start_bot(slice) }
+  leave.each do |c|
+    puts "LEAVING #{c}"
+    $bot.part(c)
   end
 
-  # grab a new top list every 30 minutes
-  sleep(30*60)
+  # yeahhh, i'm going to need that TPS report
+  delta = $db.get("total").to_i - count1
+  tps = (delta.to_f / 300.to_f).to_i
 
-  puts "KILLING"
-
-  procs.each do |pid| 
-    Process.kill("KILL", pid)
-  end
-
-  procs = []
+  puts "Avg #{tps} msg/sec"
 end
