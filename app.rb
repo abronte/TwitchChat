@@ -74,12 +74,10 @@ sleep(60)
 # main loop that monitors what channels we should be
 # listening to
 loop do
-  count1 = $db.get("total").to_i
-
   channels = $bot.channels.map {|c| c.to_s}
   puts "Current channels: #{channels.join(", ")}"
 
-  sleep(5 * 60)
+  sleep(30 * 60)
 
   # get an updated top 30 list and join/leave
   # channels based on this list
@@ -97,10 +95,4 @@ loop do
     puts "LEAVING #{c}"
     $bot.part(c)
   end
-
-  # yeahhh, i'm going to need that TPS report
-  delta = $db.get("total").to_i - count1
-  tps = (delta.to_f / 300.to_f).to_i
-
-  puts "Avg #{tps} msg/sec"
 end
