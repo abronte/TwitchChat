@@ -99,10 +99,14 @@ def start_bot
   end
 end
 
+# kind of janky, but there seems to be a memory leak in cinch
+# to solve this without manual in-app without manual intervention, we
+# fork the main loop and kill the fork after every so often. this does
+# produce zombie procs, but the zombies dont take up any resources
 loop do
   pid = fork { start_bot }
 
-  sleep(60*60)
+  sleep(180*60)
 
   Process.kill("KILL", pid)
 end
